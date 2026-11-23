@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>บทเรียนออนไลน์</title>
+</head>
+<body style="font-family:sans-serif;text-align:center;padding-top:80px;color:#4A5568">
+<p id="m">กำลังโหลดบทเรียน…</p>
+<script>
+/* หน้านี้แค่ดึงหน้าบทเรียนจาก Apps Script มาแสดง — แก้บทเรียนที่ Apps Script ที่เดียว ไม่ต้องแก้ไฟล์นี้ */
+(function () {
+  var API = 'https://script.google.com/macros/s/AKfycbwmPTaLobwhnER3z_LLeDRLTgwkpFc4R-3gcWv76BxU_eb5RKnkqtK8VCqDNrnb-R4/exec';
+  function go(n) {
+    fetch(API, { method: 'POST', body: JSON.stringify({ fn: 'page', args: [] }) })
+      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (!r.ok) throw new Error(r.error);
+        var h = r.data.replace('<base target="_top">', '')
+          .replace('<script>', '<script>window.API_URL = ' + JSON.stringify(API) + ';</' + 'script><script>');
+        document.open(); document.write(h); document.close();
+      })
+      .catch(function () {
+        if (n < 2) return setTimeout(function () { go(n + 1); }, 1500);
+        document.getElementById('m').innerHTML = 'โหลดไม่สำเร็จ เช็กอินเทอร์เน็ตแล้ว <a href="">ลองใหม่</a>';
+      });
+  }
+  go(0);
+})();
+</script>
+</body>
+</html>
